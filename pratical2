@@ -1,0 +1,78 @@
+#include <iostream> 
+#include <vector> 
+#include <cmath> 
+#include <chrono> 
+ 
+using namespace std; using namespace std::chrono; 
+ 
+// Jump Search Function int jumpSearch(vector<int> arr, int key) 
+{     int n = arr.size();     int step = sqrt(n);     int prev = 0; 
+ 
+    while (arr[min(step, n) - 1] < key) 
+    {         prev = step;         step += sqrt(n); 
+ 
+        if (prev >= n)             return -1; 
+    } 
+ 
+    while (arr[prev] < key) 
+    { 
+        prev++; 
+ 
+        if (prev == min(step, n))             return -1; 
+    } 
+ 
+    if (arr[prev] == key)         return prev; 
+ 
+    return -1; 
+} 
+                                                                                                                          |1   
+ 
+// Interpolation Search Function int interpolationSearch(vector<int> arr, int key) 
+{     int low = 0; 
+    int high = arr.size() - 1; 
+ 
+    while (low <= high && key >= arr[low] && key <= arr[high]) 
+    {         if (low == high) 
+        {             if (arr[low] == key)                 return low;             return -1; 
+        } 
+ 
+        int pos = low + ((double)(high - low) / 
+                         (arr[high] - arr[low])) * (key - arr[low]); 
+ 
+        if (arr[pos] == key)             return pos; 
+ 
+        if (arr[pos] < key)             low = pos + 1;         else             high = pos - 1; 
+    } 
+ 
+    return -1; 
+} 
+ 
+int main() {     int n = 100000;     vector<int> arr(n); 
+ 
+    // Creating a sorted array     for (int i = 0; i < n; i++)         arr[i] = i + 1; 
+ 
+    int key;     cout << "Enter element to search: ";     cin >> key; 
+  	  
+	 	6 
+    int index; 
+ 
+    // Jump Search Timing     auto start = high_resolution_clock::now();     index = jumpSearch(arr, key); 
+    auto stop = high_resolution_clock::now(); 
+ 
+    cout << "\nJump Search\n";     if (index != -1)         cout << "Element found at index " << index << endl;     else         cout << "Element not found\n"; 
+ 
+    cout << "Time Taken : " 
+         << duration_cast<microseconds>(stop - start).count() 
+         << " microseconds\n"; 
+ 
+    // Interpolation Search Timing     start = high_resolution_clock::now();     index = interpolationSearch(arr, key);     stop = high_resolution_clock::now(); 
+ 
+    cout << "\nInterpolation Search\n";     if (index != -1)         cout << "Element found at index " << index << endl;     else         cout << "Element not found\n"; 
+ 
+    cout << "Time Taken : " 
+         << duration_cast<microseconds>(stop - start).count() 
+         << " microseconds\n"; 
+ 
+    return 0; 
+                                                                                                                          |3   
+}
