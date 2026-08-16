@@ -1,0 +1,133 @@
+#include <iostream> 
+#include <vector> 
+#include <cstdlib> 
+#include <ctime> 
+#include <chrono> 
+ 
+using namespace std; using namespace std::chrono; 
+ 
+// Heap Sort void heapify(vector<int> &arr, int n, int i) 
+{     int largest = i;     int left = 2 * i + 1;     int right = 2 * i + 2; 
+ 
+    if (left < n && arr[left] > arr[largest])         largest = left; 
+ 
+    if (right < n && arr[right] > arr[largest])         largest = right; 
+ 
+    if (largest != i) 
+    {         swap(arr[i], arr[largest]);         heapify(arr, n, largest); 
+    } 
+} 
+ 
+void heapSort(vector<int> &arr) 
+{     int n = arr.size(); 
+ 
+    for (int i = n / 2 - 1; i >= 0; i--)         heapify(arr, n, i); 
+ 
+    for (int i = n - 1; i > 0; i--) 
+    {         swap(arr[0], arr[i]);         heapify(arr, i, 0); 
+    } 
+} 
+ 
+// Shell Sort 
+void shellSort(vector<int> &arr) 
+{ 
+    int n = arr.size(); 
+ 
+    for (int gap = n / 2; gap > 0; gap /= 2) 
+    {         for (int i = gap; i < n; i++) 
+        {             int temp = arr[i];             int j; 
+ 
+            for (j = i; j >= gap && arr[j - gap] > temp; j -= gap)                 arr[j] = arr[j - gap]; 
+ 
+            arr[j] = temp; 
+        } 
+    } 
+} 
+ 
+// Counting Sort 
+void countingSort(vector<int> &arr) 
+{     int maxVal = arr[0]; 
+ 
+    for (int x : arr)         if (x > maxVal)             maxVal = x; 
+ 
+    vector<int> count(maxVal + 1, 0); 
+ 
+    for (int x : arr)         count[x]++; 
+ 
+    int index = 0; 
+ 
+    for (int i = 0; i <= maxVal; i++) 
+    {         while (count[i]--)             arr[index++] = i; 
+    } 
+} 
+ 
+// Radix Sort void countingSortDigit(vector<int> &arr, int exp) 
+{     int n = arr.size();     vector<int> output(n);     int count[10] = {0}; 
+ 
+    for (int i = 0; i < n; i++)         count[(arr[i] / exp) % 10]++; 
+ 
+    for (int i = 1; i < 10; i++)         count[i] += count[i - 1]; 
+ 
+    for (int i = n - 1; i >= 0; i--) 
+    {         output[count[(arr[i] / exp) % 10] - 1] = arr[i];         count[(arr[i] / exp) % 10]--; 
+    } 
+ 
+    arr = output; 
+} 
+ 
+void radixSort(vector<int> &arr) 
+{ 
+    int maxVal = arr[0]; 
+ 
+    for (int x : arr)         if (x > maxVal)             maxVal = x; 
+ 
+    for (int exp = 1; maxVal / exp > 0; exp *= 10)         countingSortDigit(arr, exp); 
+} 
+ 
+// Comb Sort void combSort(vector<int> &arr) {     int n = arr.size();     int gap = n;     bool swapped = true; 
+ 
+    while (gap != 1 || swapped) 
+    {         gap = (gap * 10) / 13;         if (gap < 1)             gap = 1; 
+ 
+        swapped = false; 
+ 
+        for (int i = 0; i + gap < n; i++) 
+        {             if (arr[i] > arr[i + gap]) 
+            {                 swap(arr[i], arr[i + gap]);                 swapped = true; 
+            } 
+        } 
+    } 
+} 
+ 
+int main() { 
+    const int n = 100; 
+ 
+    vector<int> arr(n), temp; 
+ 
+    srand(time(0)); 
+ 
+    for (int i = 0; i < n; i++)         arr[i] = rand() % 1000; 
+ 
+    cout << "Number of Elements = " << n << "\n\n"; 
+ 
+    auto start = high_resolution_clock::now();     temp = arr;     heapSort(temp);     auto stop = high_resolution_clock::now();     cout << "Heap Sort Time      : " 
+         << duration_cast<microseconds>(stop - start).count()          << " microseconds\n"; 
+ 
+    start = high_resolution_clock::now();     temp = arr;     shellSort(temp);     stop = high_resolution_clock::now();     cout << "Shell Sort Time     : " 
+         << duration_cast<microseconds>(stop - start).count() 
+         << " microseconds\n"; 
+ 
+    start = high_resolution_clock::now();     temp = arr;     countingSort(temp);     stop = high_resolution_clock::now();     cout << "Counting Sort Time  : " 
+         << duration_cast<microseconds>(stop - start).count() 
+         << " microseconds\n"; 
+ 
+    start = high_resolution_clock::now();     temp = arr;     radixSort(temp);     stop = high_resolution_clock::now();     cout << "Radix Sort Time     : " 
+         << duration_cast<microseconds>(stop - start).count() 
+         << " microseconds\n"; 
+ 
+    start = high_resolution_clock::now();     temp = arr;     combSort(temp);     stop = high_resolution_clock::now();     cout << "Comb Sort Time      : " 
+         << duration_cast<microseconds>(stop - start).count() 
+         << " microseconds\n"; 
+ 
+    return 0; 
+}
